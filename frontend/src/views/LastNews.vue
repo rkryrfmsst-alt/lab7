@@ -63,11 +63,11 @@ const newsList = data.NewsArray
 
 .news-grid {
   display: grid;
-  grid-template-columns: repeat(4, 320px);
+  grid-template-columns: repeat(3, 320px);
   gap: 25px 60px;
 }
 
 .featured-item {
-  grid-column: span 4;
+  grid-column: span 3;
 }
 </style>

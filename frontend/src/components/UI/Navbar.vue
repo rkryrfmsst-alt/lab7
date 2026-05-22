@@ -1,9 +1,23 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import AuthDialog from './AuthDialog.vue'
 
 const emit = defineEmits(['toggle-sidebar'])
 const isAuthOpen = ref(false)
+const currentUserFields = ref(null)
+
+const displayName = computed(() => {
+  if (!currentUserFields.value) return null
+  const f = currentUserFields.value
+  const firstName = f['Name'] || ''
+  const surname = f['Surname'] || ''
+  const firstNameInitial = firstName ? firstName[0] + '.' : ''
+  return [surname, firstNameInitial].filter(Boolean).join(' ') || null
+})
+
+const onLogin = (fields) => {
+  currentUserFields.value = fields
+}
 </script>
 
 <template>
@@ -20,15 +34,14 @@ const isAuthOpen = ref(false)
         <span class="mdi mdi-magnify search-icon"></span>
         <input type="text" placeholder="Поиск документа">
       </div>
-      <button class="user-btn" @click="isAuthOpen = true">
-        <span class="username">Войти</span>
-        <!-- <span class="username">Иванов А.А</span> -->
+      <button class="user-btn" @click="!currentUserFields && (isAuthOpen = true)">
+        <span class="username">{{ displayName || 'Войти' }}</span>
         <span class="mdi mdi-chevron-down" style="visibility: hidden"></span>
       </button>
     </div>
   </header>
 
-  <AuthDialog v-if="isAuthOpen" @close="isAuthOpen = false" />
+  <AuthDialog v-if="isAuthOpen" @close="isAuthOpen = false" @login="onLogin" />
 </template>
 
 <style scoped>

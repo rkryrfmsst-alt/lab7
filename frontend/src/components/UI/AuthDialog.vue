@@ -1,7 +1,7 @@
 <script setup>
 import { ref, inject } from 'vue'
 
-const emit = defineEmits(['close'])
+const emit = defineEmits(['close', 'login'])
 
 const loginService = inject('loginService')
 const userService = inject('userService')
@@ -17,13 +17,13 @@ const signIn = () => {
 
   loginService.authorizationUser(email.value, password.value)
     .then((response) => {
-      console.log(response)
-      console.log('Авторизация')
       sessionStorage.setItem('recordId', response.userId)
       return userService.getCurrentUser(response.userId)
     })
-    .then((user) => {
-      console.log('Текущий пользователь:', user)
+    .then((data) => {
+      const fields = data.user?.records?.[0]?.fields || {}
+      emit('login', fields)
+      emit('close')
     })
 }
 </script>
